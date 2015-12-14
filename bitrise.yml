@@ -1,0 +1,29 @@
+format_version: 1.0.0
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+app:
+  envs:
+  - PLUGIN_VERSION: 0.9.1
+  - PLUGIN_NAME: hello
+
+workflows:
+  create_release:
+    steps:
+    - script:
+        title: Create release
+        inputs:
+        - content: |
+            #!/bin/bash
+            set -e
+
+            ARCH=x86_64
+
+            echo
+            echo "=> Create darwin release..."
+            OS=Darwin
+            env GOOS=darwin GOARCH=amd64 go build -o "_bin/$PLUGIN_VERSION/$PLUGIN_NAME-$OS-$ARCH" main.go
+
+            echo
+            echo "=> Create linux release..."
+            OS=Linux
+            env GOOS=linux GOARCH=amd64 go build -o "_bin/$PLUGIN_VERSION/$PLUGIN_NAME-$OS-$ARCH" main.go
