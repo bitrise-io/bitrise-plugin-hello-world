@@ -32,11 +32,17 @@ func readMessageFromBitrise() (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
 }
 
-// Print errors to os.Stderr
+// Print errors to os.Stderr and exit 1
 func sendFatal(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
 	fmt.Fprintf(os.Stderr, "\x1b[31;1m%s\x1b[0m\n", msg)
 	os.Exit(1)
+}
+
+// Print errors to os.Stderr
+func sendError(format string, a ...interface{}) {
+	msg := fmt.Sprintf(format, a...)
+	fmt.Fprintf(os.Stderr, "\x1b[31;1m%s\x1b[0m\n", msg)
 }
 
 // Print outputs to os.Stderr
