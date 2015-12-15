@@ -3,12 +3,22 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
-  - PLUGIN_VERSION: 0.9.1
   - PLUGIN_NAME: hello
 
 workflows:
   create_release:
     steps:
+    - script:
+        title: Export version
+        inputs:
+        - content: |
+            #!/bin/bash
+            set -e
+
+            version=$(cat ./version)
+            echo "version: $version"
+
+            envman add --key VERSION --value $version
     - script:
         title: Create release
         inputs:
@@ -20,10 +30,16 @@ workflows:
 
             echo
             echo "=> Create darwin release..."
+
             OS=Darwin
-            env GOOS=darwin GOARCH=amd64 go build -o "_bin/$PLUGIN_VERSION/$PLUGIN_NAME-$OS-$ARCH" main.go
+            deploy_pth="_bin/$VERSION/$PLUGIN_NAME-$OS-$ARCH"
+            env GOOS=darwin GOARCH=amd64 go build -o $deploy_pth main.go
+            echo "$OS release: $(realpath $deploy_pth)"
 
             echo
             echo "=> Create linux release..."
+
             OS=Linux
-            env GOOS=linux GOARCH=amd64 go build -o "_bin/$PLUGIN_VERSION/$PLUGIN_NAME-$OS-$ARCH" main.go
+            deploy_pth="_bin/$VERSION/$PLUGIN_NAME-$OS-$ARCH"
+            env GOOS=linux GOARCH=amd64 go build -o $deploy_pth main.go
+            echo "$OS release: $(realpath $deploy_pth)"
